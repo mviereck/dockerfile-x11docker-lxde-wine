@@ -8,7 +8,7 @@ Get x11docker script from github: https://github.com/mviereck/x11docker
 
 Creates a user 'xduser'; username can be changed with option '-e XDUSER=username'<br>
 
-#Examples: <br>
+# Examples: <br>
  - Run LXDE desktop including wine on separate, new X server:<br>
    x11docker --desktop run x11docker/lxde-wine<br>
  - Include your host ~/.wine folder and run dockered desktop with same user name as on host:<br>
@@ -17,5 +17,5 @@ Creates a user 'xduser'; username can be changed with option '-e XDUSER=username
    x11docker --desktop run -e XDUSER=$USER -v $HOME/x11docker/lxde-wine:$HOME:rw x11docker/lxde-wine 
 
 
-#known issues:
+# known issues:
  - wine-gecko2.40 is installed, but seems to be not recognized
