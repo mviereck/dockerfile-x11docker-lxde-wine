@@ -14,7 +14,7 @@ https://raw.githubusercontent.com/mviereck/x11docker/e49e109f9e78410d242a0226e58
   - x11docker --desktop x11docker/lxde-wine
 
  - Use host folder to preserve installed Windows applications. Create a container user similar to your host user to avoid file permission issues:
-   - x11docker --desktop --hostuser --home x11docker/lxde-wine 
+  - x11docker --desktop --hostuser --home x11docker/lxde-wine start
 
 # known issues:
  - wine-gecko2.40 is installed, but seems to be not recognized
