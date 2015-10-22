@@ -12,6 +12,9 @@
 # known issues:
 #  * wine-gecko2.40 seems to be not recognized
 
+#
+# changelog : 18.10.2015: added midori browser
+
 FROM x11docker/lxde:latest
 
 RUN apt-get  update
@@ -30,8 +33,25 @@ RUN apt-get install -y winetricks
 RUN apt-get install -y wine-gecko2.40
 RUN apt-get install -y wine-mono4.5.6
 
-RUN apt-get clean
+# include playonlinux repo
+RUN wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
+RUN wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list
+RUN apt-get update
 
+# install playonlinux
+RUN apt-get install -y playonlinux
+# playonlinux wants to have this:
+RUN apt-get install -y xterm gettext
+
+# midori browser: not needed for wine, but useful to download windows applications
+RUN apt-get install -y --no-install-recommends midori
+
+# enable this for sound controls
+# (to use sound, you need further configuration in the docker run command.
+#  sound forwarding is still not well supported by docker)
+#RUN apt-get install -y pavucontrol
+
+RUN apt-get clean
 
 # create desktop icons that will be copied to every new user
 #
@@ -78,6 +98,12 @@ RUN echo Type=Application    >> /etc/skel/Desktop/Wineregedit.desktop
 RUN echo Name=regedit        >> /etc/skel/Desktop/Wineregedit.desktop
 RUN echo Exec=regedit        >> /etc/skel/Desktop/Wineregedit.desktop
 RUN echo Icon=wine           >> /etc/skel/Desktop/Wineregedit.desktop
+RUN echo [Desktop Entry]     > /etc/skel/Desktop/playonlinux.desktop
+RUN echo Version=1.0         >> /etc/skel/Desktop/playonlinux.desktop
+RUN echo Type=Application    >> /etc/skel/Desktop/playonlinux.desktop
+RUN echo Name=Play on Linux  >> /etc/skel/Desktop/playonlinux.desktop
+RUN echo Exec=playonlinux    >> /etc/skel/Desktop/playonlinux.desktop
+RUN echo Icon=playonlinux    >> /etc/skel/Desktop/playonlinux.desktop
 
 # doesn't work because it needs mouse clicks
 #RUN msiexec /usr/share/wine/gecko/msiexec /i wine_gecko-2.40-x86_64.msi
