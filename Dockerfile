@@ -1,15 +1,15 @@
 # x11docker/lxde-wine
 # Run wine on LXDE desktop in docker. 
 # Use x11docker to run image. 
-# Get x11docker script from github: 
+# Get x11docker and x11docker-gui from github: 
 #   https://github.com/mviereck/x11docker 
-# Raw x11docker script:
-#   https://raw.githubusercontent.com/mviereck/x11docker/e49e109f9e78410d242a0226e58127ec9f9d6181/x11docker
 #
 # Examples: x11docker --desktop x11docker/lxde-wine
 #           x11docker --xephyr --desktop x11docker/lxde-wine
 #           x11docker --xpra x11docker/lxde-wine playonlinux
-# To create a persistant home folder to preserve your wine installations, use options --home --hostuser
+#
+# To create a persistant home folder to preserve your wine installations, 
+# use options --home --hostuser
 # Examples: x11docker --desktop --home --hostuser x11docker/lxde-wine
 #           x11docker --xephyr --desktop --home --hostuser x11docker/lxde-wine start
 #           x11docker --xpra --home --hostuser x11docker/lxde-wine playonlinux
@@ -17,30 +17,33 @@
 # known issues:
 #  * wine-gecko2.40 seems to be not recognized
 
-#
-# changelog : 18.10.2015: added midori browser
-
 FROM x11docker/lxde:latest
 
-RUN apt-get  update
+RUN apt-get update
 
 # include wine ppa
-RUN echo "deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu trusty main"        > /etc/apt/sources.list.d/wine_ppa.list
-RUN sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com     883E8688397576B6C509DF495A9A06AEF9CB8DB0
+RUN echo "deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu xenial main"        > /etc/apt/sources.list.d/wine_ppa.list
+RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com     883E8688397576B6C509DF495A9A06AEF9CB8DB0
 
 # add multiarch support
 RUN dpkg --add-architecture i386
 RUN apt-get update
 
 # install wine
-RUN apt-get install -y wine1.7
+RUN apt-get install -y wine1.8
 RUN apt-get install -y winetricks
-RUN apt-get install -y wine-gecko2.40
-RUN apt-get install -y wine-mono4.5.6
+# not available in ppa for xenial:
+#RUN apt-get install -y wine-mono4.5.6
+#RUN apt-get install -y wine-gecko2.36
 
-# include playonlinux repo
-RUN wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
-RUN wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list
+# include playonlinux repo 
+# (not needed right now. ubuntu 16.04 includes actual playonlinux version)
+# RUN wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
+# RUN wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list
+# RUN apt-get update
+
+# include multiverse repository to get playonlinux
+RUN echo 'deb http://archive.ubuntu.com/ubuntu/ xenial multiverse' >> /etc/apt/sources.list
 RUN apt-get update
 
 # install playonlinux
@@ -48,12 +51,18 @@ RUN apt-get install -y playonlinux
 # playonlinux wants to have this:
 RUN apt-get install -y xterm gettext
 
-# install q4wine
+# OpenGl support in the dependencies
+#RUN apt-get install -y mesa-utils mesa-utils-extra
+
+# install q4wine, another frontend for wine
 RUN apt-get install -y q4wine
 
 # dillo browser: not needed for wine, but useful to download windows applications
 RUN apt-get install -y dillo
 
+# PDF viewer evince-gtk
+RUN apt-get update
+RUN apt-get install -y evince-gtk
 
 # enable this for sound controls
 # (to use sound, you need further configuration in the docker run command.
