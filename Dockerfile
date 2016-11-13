@@ -1,5 +1,5 @@
 # x11docker/lxde-wine
-# Run wine on LXDE desktop in docker. 
+# Run wine and playonlinux with LXDE desktop in docker. 
 # Use x11docker to run image. 
 # Get x11docker and x11docker-gui from github: 
 #   https://github.com/mviereck/x11docker 
@@ -14,8 +14,6 @@
 #           x11docker --xephyr --desktop --home --hostuser x11docker/lxde-wine start
 #           x11docker --xpra --home --hostuser x11docker/lxde-wine playonlinux
 
-# known issues:
-#  * wine-gecko2.40 seems to be not recognized
 
 FROM x11docker/lxde:latest
 
@@ -31,13 +29,9 @@ RUN apt-get update
 
 # install wine
 RUN apt-get install -y wine1.8
-RUN apt-get install -y winetricks
-# not available in ppa for xenial:
-#RUN apt-get install -y wine-mono4.5.6
-#RUN apt-get install -y wine-gecko2.36
 
 # include playonlinux repo 
-# (not needed right now. ubuntu 16.04 includes actual playonlinux version)
+# (not needed right now. ubuntu 16.04 xenial includes actual playonlinux version)
 # RUN wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
 # RUN wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list
 # RUN apt-get update
@@ -51,23 +45,36 @@ RUN apt-get install -y playonlinux
 # playonlinux wants to have this:
 RUN apt-get install -y xterm gettext
 
-# OpenGl support in the dependencies
-#RUN apt-get install -y mesa-utils mesa-utils-extra
-
 # install q4wine, another frontend for wine
 RUN apt-get install -y q4wine
+
+
+## some additional installations
+
+## some X libs, f.e. allowing videos in Xephyr
+RUN apt-get install -y --no-install-recommends x11-utils
+
+## OpenGl support in dependencies
+RUN apt-get install -y mesa-utils mesa-utils-extra
+
+## Pulseaudio support
+RUN apt-get install -y --no-install-recommends pulseaudio
+# enable one of the following to get sound controls
+#RUN apt-get install -y --no-install-recommends pavucontrol
+#RUN apt-get install -y --no-install-recommends pasystray
+
+## Xrandr and some other goodies
+RUN apt-get install -y x11-xserver-utils
 
 # dillo browser: not needed for wine, but useful to download windows applications
 RUN apt-get install -y dillo
 
 # PDF viewer evince-gtk
-RUN apt-get update
 RUN apt-get install -y evince-gtk
 
-# enable this for sound controls
-# (to use sound, you need further configuration in the docker run command.
-#  sound forwarding is still not well supported by docker)
-#RUN apt-get install -y pavucontrol
+## VLC media player
+# RUN apt-get install -y vlc
+
 
 # clean up
 RUN apt-get clean
@@ -206,14 +213,16 @@ Exec=wine oleview\n\
 Icon=preferences-system\n\
 " > /etc/skel/Desktop/WineOleView.desktop
 
-
-# doesn't work because it needs mouse clicks
-#RUN msiexec /usr/share/wine/gecko/msiexec /i wine_gecko-2.40-x86_64.msi
+# files in /etc/skel will automatically be added for new users. manual copy for root
+RUN cp -R /etc/skel/. /root/
+RUN cp -R /etc/skel/* /root/
 
 # create startscript
-# (will copy Desktop icons, if not already present, and start x-session-manager
 RUN echo '#! /bin/bash\n\
-if [ ! -e "$HOME/Desktop" ] ; then cp -R /etc/skel/* $HOME ; fi\n\
+if [ ! -e "$HOME/.config" ] ; then\n\
+  cp -R /etc/skel/. $HOME/ \n\
+  cp -R /etc/skel/* $HOME/ \n\
+fi\n\
 x-session-manager\n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
