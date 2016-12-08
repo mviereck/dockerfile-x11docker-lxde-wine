@@ -15,7 +15,7 @@
 #           x11docker --xpra --home --hostuser x11docker/lxde-wine playonlinux
 
 
-FROM x11docker/lxde:latest
+FROM x11docker/lxde
 
 RUN apt-get update
 
@@ -231,7 +231,10 @@ case $DISPLAY in\n\
     x11docker --desktop x11docker/lxde-wine start"\n\
   exit 1 ;;\n\
 esac\n\
-x-session-manager\n\
+#lxsession\n\
+openbox --sm-disable &\n\
+pcmanfm --desktop --profile LXDE &\n\
+lxpanel --profile LXDE \n\
 ' > /usr/local/bin/start 
 RUN chmod +x /usr/local/bin/start 
 
