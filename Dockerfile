@@ -217,25 +217,4 @@ Icon=preferences-system\n\
 RUN cp -R /etc/skel/. /root/
 RUN cp -R /etc/skel/* /root/
 
-# create startscript
-RUN echo '#! /bin/bash\n\
-if [ ! -e "$HOME/.config" ] ; then\n\
-  cp -R /etc/skel/. $HOME/ \n\
-  cp -R /etc/skel/* $HOME/ \n\
-fi\n\
-case $DISPLAY in\n\
-  "")  echo "Need X server to start LXDE.\n\
-  To run GUI applications in docker, you can use x11docker.\n\
-  Get x11docker from github: https://github.com/mviereck/x11docker\n\
-  Run image with command:\n\
-    x11docker --desktop x11docker/lxde-wine start"\n\
-  exit 1 ;;\n\
-esac\n\
-#lxsession\n\
-openbox --sm-disable &\n\
-pcmanfm --desktop --profile LXDE &\n\
-lxpanel --profile LXDE \n\
-' > /usr/local/bin/start 
-RUN chmod +x /usr/local/bin/start 
-
 CMD start
