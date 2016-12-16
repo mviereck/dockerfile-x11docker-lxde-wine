@@ -1,6 +1,6 @@
 # x11docker/lxde-wine
 
-LXDE desktop containing wine, wine-mono, wine-gecko, winetricks and playonlinux
+LXDE desktop containing wine, winetricks, q4wine and playonlinux
 
  - Use x11docker to run image. 
  - Get [x11docker and x11docker-gui from github](https://github.com/mviereck/x11docker) to be able to run GUI applications and desktops from within docker images.
