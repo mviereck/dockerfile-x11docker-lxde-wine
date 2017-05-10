@@ -1,85 +1,58 @@
 # x11docker/lxde-wine
-# Run wine and playonlinux with LXDE desktop in docker. 
+# Run wine on Xfce desktop in docker. 
 # Use x11docker to run image. 
-# Get x11docker and x11docker-gui from github: 
+# Get x11docker script and x11docker-gui from github: 
 #   https://github.com/mviereck/x11docker 
 #
-# Examples: x11docker --desktop x11docker/lxde-wine
-#           x11docker --xephyr --desktop x11docker/lxde-wine
-#           x11docker --xpra x11docker/lxde-wine playonlinux
+# Examples: x11docker --wm=none x11docker/lxde-wine
+#           x11docker x11docker/lxde-wine playonlinux
 #
-# To create a persistant home folder to preserve your wine installations, 
-# use options --home --hostuser
-# Examples: x11docker --desktop --home --hostuser x11docker/lxde-wine
-#           x11docker --xephyr --desktop --home --hostuser x11docker/lxde-wine start
-#           x11docker --xpra --home --hostuser x11docker/lxde-wine playonlinux
+# Use option --home to create a persistant home folder preserving your wine installations.
+# Examples: x11docker --wm=none --home x11docker/lxde-wine
+#           x11docker --home x11docker/lxde-wine playonlinux
+#
+# To have pulseaudio sound, add option --pulseaudio.
+# To have hardware accelerated graphics, use option --gpu.
 
 
-FROM x11docker/lxde
-
-RUN apt-get update
-
-# include wine ppa
-RUN echo "deb http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu xenial main"        > /etc/apt/sources.list.d/wine_ppa.list
-RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com     883E8688397576B6C509DF495A9A06AEF9CB8DB0
-
-# add multiarch support
+FROM x11docker/lxde:latest
+RUN echo "deb http://deb.debian.org/debian stretch contrib" >> /etc/apt/sources.list
 RUN dpkg --add-architecture i386
 RUN apt-get update
 
 # install wine
-RUN apt-get install -y wine1.8
-
-# include playonlinux repo 
-# (not needed right now. ubuntu 16.04 xenial includes actual playonlinux version)
-# RUN wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
-# RUN wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list
-# RUN apt-get update
-
-# include multiverse repository to get playonlinux
-RUN echo 'deb http://archive.ubuntu.com/ubuntu/ xenial multiverse' >> /etc/apt/sources.list
-RUN apt-get update
+RUN apt-get install -y wine wine32 wine64
+RUN apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
+# wine gecko
+RUN mkdir -p /usr/share/wine/gecko
+RUN cd /usr/share/wine/gecko && wget http://dl.winehq.org/wine/wine-gecko/2.40/wine_gecko-2.40-x86.msi
+# wine mono
+RUN mkdir -p /usr/share/wine/mono
+RUN cd /usr/share/wine/mono && wget https://dl.winehq.org/wine/wine-mono/4.7.0/wine-mono-4.7.0.msi
 
 # install playonlinux
-RUN apt-get install -y playonlinux
-# playonlinux wants to have this:
-RUN apt-get install -y xterm gettext
+RUN apt-get install -y playonlinux xterm gettext
 
 # install q4wine, another frontend for wine
 RUN apt-get install -y q4wine
 
-
-## some additional installations
-
 ## some X libs, f.e. allowing videos in Xephyr
-RUN apt-get install -y --no-install-recommends x11-utils
+RUN apt-get install -y --no-install-recommends x11-utils libxv1
 
-## OpenGl support in dependencies
-RUN apt-get install -y mesa-utils mesa-utils-extra
+## OpenGL support
+RUN apt-get install -y mesa-utils mesa-utils-extra libgl1-mesa-glx libglew2.0 libglu1-mesa libgl1-mesa-dri libdrm2 libgles2-mesa libegl1-mesa
 
 ## Pulseaudio support
 RUN apt-get install -y --no-install-recommends pulseaudio
 # enable one of the following to get sound controls
-#RUN apt-get install -y --no-install-recommends pavucontrol
-#RUN apt-get install -y --no-install-recommends pasystray
-
-## Xrandr and some other goodies
-RUN apt-get install -y x11-xserver-utils
+RUN apt-get install -y --no-install-recommends pasystray
+# RUN apt-get install -y --no-install-recommends pavucontrol
 
 # dillo browser: not needed for wine, but useful to download windows applications
 RUN apt-get install -y dillo
 
 # PDF viewer evince-gtk
 RUN apt-get install -y evince-gtk
-
-## VLC media player
-# RUN apt-get install -y vlc
-
-
-# clean up
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 
 # create desktop icons that will be copied to every new user
 #
@@ -129,7 +102,7 @@ RUN echo "[Desktop Entry]\n\
 Version=1.0\n\
 Type=Application\n\
 Name=Notepad\n\
-Exec=notepad\n\
+Exec=wine notepad\n\
 Icon=wine-notepad\n\
 " > /etc/skel/Desktop/WineNotepad.desktop
 
@@ -161,7 +134,7 @@ RUN echo "[Desktop Entry]\n\
 Version=1.0\n\
 Type=Application\n\
 Name=Mines\n\
-Exec=winemine\n\
+Exec=wine winemine\n\
 Icon=face-cool\n\
 " > /etc/skel/Desktop/WineMine.desktop
 
@@ -169,7 +142,7 @@ RUN echo "[Desktop Entry]\n\
 Version=1.0\n\
 Type=Application\n\
 Name=winetricks\n\
-Exec=winetricks\n\
+Exec=winetricks --gui\n\
 Icon=wine\n\
 " > /etc/skel/Desktop/winetricks.desktop
 
@@ -213,8 +186,5 @@ Exec=wine oleview\n\
 Icon=preferences-system\n\
 " > /etc/skel/Desktop/WineOleView.desktop
 
-# files in /etc/skel will automatically be added for new users. manual copy for root
-RUN cp -R /etc/skel/. /root/
-RUN cp -R /etc/skel/* /root/
-
+# use /usr/local/bin/start from x11docker/lxde
 CMD start
