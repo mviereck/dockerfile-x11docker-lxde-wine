@@ -186,5 +186,22 @@ Exec=wine oleview\n\
 Icon=preferences-system\n\
 " > /etc/skel/Desktop/WineOleView.desktop
 
-# use /usr/local/bin/start from x11docker/lxde
+
+# create startscript 
+RUN echo '#! /bin/bash\n\
+[ "$HOME" = "/tmp" ] && export HOME=/tmp/fakehome && mkdir -p $HOME
+if [ ! -e "$HOME/.config" ] ; then\n\
+  cp -R /etc/skel/. $HOME/ \n\
+  cp -R /etc/skel/* $HOME/ \n\
+fi\n\
+if [ "$*" = "" ] ; then \n\
+  openbox --sm-disable &\n\
+  pcmanfm --desktop &\n\
+  lxpanel \n\
+else \n\
+  eval $* \n\
+fi \n\
+' > /usr/local/bin/start 
+RUN chmod +x /usr/local/bin/start 
+
 CMD start
