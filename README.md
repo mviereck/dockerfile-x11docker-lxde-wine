@@ -14,7 +14,9 @@ Use host folder to preserve installed Windows applications:
 
 Run Playonlinux with pulseaudio sound. Use host folder to preserve installed Windows applications:
  - `x11docker --home --pulseaudio x11docker/lxde-wine playonlinux`
-
+ 
+# Fonts: chinese, japanese, korean
+To enable chinese, japanese and korean fonts in wine, run `winetricks cjkfonts`. You can also use a starter provided on the desktop  for this. 
 
 # Screenshot
 
