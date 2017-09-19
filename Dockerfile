@@ -50,7 +50,7 @@ RUN apt-get install -y dillo evince-gtk
 
 # create desktop icons that will be copied to every new user
 #
-RUN mkdir /etc/skel/Desktop
+RUN mkdir -p /etc/skel/Desktop
 
 RUN echo "[Desktop Entry]\n\
 Version=1.0\n\
@@ -187,22 +187,5 @@ xterm -e 'winetricks cjkfonts'\n\
 " > "/etc/skel/Desktop/chinese, japanese and korean font installer for wine"
 RUN chmod +x "/etc/skel/Desktop/chinese, japanese and korean font installer for wine"
 
-
-# create startscript 
-RUN echo '#! /bin/bash\n\
-[ "$HOME" = "/tmp" ] && export HOME=/tmp/fakehome && mkdir -p $HOME \n\
-if [ ! -e "$HOME/.config" ] ; then\n\
-  cp -R /etc/skel/. $HOME/ \n\
-  cp -R /etc/skel/* $HOME/ \n\
-fi\n\
-if [ "$*" = "" ] ; then \n\
-  openbox --sm-disable &\n\
-  pcmanfm --desktop &\n\
-  lxpanel \n\
-else \n\
-  eval $* \n\
-fi \n\
-' > /usr/local/bin/start 
-RUN chmod +x /usr/local/bin/start 
-
+# start script for LXDE desktop already defined in x11docker/lxde
 CMD start
