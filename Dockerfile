@@ -5,10 +5,8 @@
 # Get x11docker from github: 
 #   https://github.com/mviereck/x11docker 
 #
-# Examples: x11docker --desktop x11docker/lxde-wine
-#           x11docker x11docker/lxde-wine playonlinux
-#
-# Use option --home to create a persistant home folder preserving your wine installations.
+# Use option --home to create a persistant home folder 
+# in ~/x11docker to preserve your wine installations.
 #
 # Examples: 
 #   - Run desktop:
