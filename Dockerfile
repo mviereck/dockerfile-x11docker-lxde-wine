@@ -1,4 +1,5 @@
 # x11docker/lxde-wine
+#
 # Run wine on LXDE desktop in docker. 
 # Use x11docker to run image. 
 # Get x11docker from github: 
@@ -8,16 +9,28 @@
 #           x11docker x11docker/lxde-wine playonlinux
 #
 # Use option --home to create a persistant home folder preserving your wine installations.
-# Examples: x11docker --home --desktop x11docker/lxde-wine
-#           x11docker --home           x11docker/lxde-wine playonlinux
 #
-# To have pulseaudio sound, add option --pulseaudio.
-# To have hardware accelerated graphics, use option --gpu.
+# Examples: 
+#   - Run desktop:
+#       x11docker --home --desktop x11docker/lxde-wine
+#   - Run PlayOnLinux only:
+#       x11docker --home x11docker/lxde-wine playonlinux
+#
+# Options:
+# Persistent home folder stored on host with   --home
+# Shared host folder with                      --sharedir DIR
+# Hardware acceleration with option            --gpu
+# Clipboard sharing with option                --clipboard
+# Sound support with option                    --alsa
+# With pulseaudio in image, sound support with --pulseaudio
+#
+# Look at x11docker --help for further options.
 
 FROM x11docker/lxde:latest
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN echo "deb http://deb.debian.org/debian stretch contrib" >> /etc/apt/sources.list
-RUN dpkg --add-architecture i386
-RUN apt-get update
+RUN dpkg --add-architecture i386 && apt-get update && apt-get dist-upgrade -y
 
 # wine
 RUN apt-get install -y wine wine32 wine64
@@ -37,14 +50,16 @@ RUN apt-get install -y playonlinux xterm gettext
 # q4wine, another frontend for wine
 RUN apt-get install -y q4wine
 
-## pulseaudio
+# pulseaudio
 RUN apt-get install -y --no-install-recommends pulseaudio pasystray pavucontrol
 
+# install all language locales
+RUN apt-get install locales-all
+
 # Utils: browser and pdf viewer
-RUN apt-get install -y dillo evince-gtk
+RUN apt-get install -y midori evince-gtk
 
-
-## Add this for chinese, japanese and korean fonts in wine
+# Enable this for chinese, japanese and korean fonts in wine
 #winetricks cjkfonts
 
 
@@ -187,5 +202,6 @@ xterm -e 'winetricks cjkfonts'\n\
 " > "/etc/skel/Desktop/chinese, japanese and korean font installer for wine"
 RUN chmod +x "/etc/skel/Desktop/chinese, japanese and korean font installer for wine"
 
-# start script for LXDE desktop already defined in x11docker/lxde
-CMD start
+# ENTRYPOINT and CMD are already defined in x11docker/lxde
+
+ENV DEBIAN_FRONTEND newt
