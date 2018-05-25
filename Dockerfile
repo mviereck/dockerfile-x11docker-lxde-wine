@@ -31,16 +31,16 @@ RUN echo "deb http://deb.debian.org/debian stretch contrib" >> /etc/apt/sources.
 RUN dpkg --add-architecture i386 && apt-get update && apt-get dist-upgrade -y
 
 # wine
-RUN apt-get install -y wine wine32 wine64
-RUN apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
+RUN apt-get install -y wine wine32 wine64 && \
+    apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
 
 # wine gecko
-RUN mkdir -p /usr/share/wine/gecko
-RUN cd /usr/share/wine/gecko && wget http://dl.winehq.org/wine/wine-gecko/2.40/wine_gecko-2.40-x86.msi
+RUN mkdir -p /usr/share/wine/gecko && \
+    cd /usr/share/wine/gecko && wget http://dl.winehq.org/wine/wine-gecko/2.40/wine_gecko-2.40-x86.msi
 
 # wine mono
-RUN mkdir -p /usr/share/wine/mono
-RUN cd /usr/share/wine/mono && wget https://dl.winehq.org/wine/wine-mono/4.7.0/wine-mono-4.7.0.msi
+RUN mkdir -p /usr/share/wine/mono && \
+    cd /usr/share/wine/mono && wget https://dl.winehq.org/wine/wine-mono/4.7.0/wine-mono-4.7.0.msi
 
 # PlayOnLinux
 RUN apt-get install -y playonlinux xterm gettext
@@ -49,10 +49,10 @@ RUN apt-get install -y playonlinux xterm gettext
 RUN apt-get install -y q4wine
 
 # pulseaudio
-RUN apt-get install -y --no-install-recommends pulseaudio pasystray pavucontrol
+RUN apt-get install -y --no-install-recommends pulseaudio pavucontrol
 
 # install all language locales
-RUN apt-get install locales-all
+RUN apt-get install -y locales-all
 
 # Utils: browser and pdf viewer
 RUN apt-get install -y midori evince-gtk
