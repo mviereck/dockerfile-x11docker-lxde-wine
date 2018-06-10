@@ -36,7 +36,7 @@ RUN apt-get install -y wine wine32 wine64 && \
 
 # wine gecko
 RUN mkdir -p /usr/share/wine/gecko && \
-    cd /usr/share/wine/gecko && wget http://dl.winehq.org/wine/wine-gecko/2.40/wine_gecko-2.47-x86.msi
+    cd /usr/share/wine/gecko && wget http://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi
 
 # wine mono
 RUN mkdir -p /usr/share/wine/mono && \
