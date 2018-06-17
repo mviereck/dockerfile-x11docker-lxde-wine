@@ -41,7 +41,7 @@ RUN apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
 # wine gecko and mono
 RUN mkdir -p /usr/share/wine/gecko && \
     cd /usr/share/wine/gecko && wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
-    cd /usr/share/wine/gecko && wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi && \
+    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi && \
     mkdir -p /usr/share/wine/mono && \
     cd /usr/share/wine/mono  && wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi
 
@@ -55,7 +55,7 @@ RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
 RUN apt-get install -y --no-install-recommends pulseaudio pasystray pavucontrol
 
 # Enable this for chinese, japanese and korean fonts in wine
-#winetricks cjkfonts
+#winetricks -q cjkfonts
 
 # create desktop icons
 #
