@@ -21,6 +21,9 @@ Run PlayOnLinux only:
  - Hardware acceleration with option            `--gpu`
  - Clipboard sharing with option                `--clipboard`
  - Sound support with option                    `--pulseaudio` or `--alsa`
+ - Language setting with                        `--lang=$LANG`
+ - Printing over CUPS with                      `--printer`
+ - Webcam support with                          `--webcam`
  
 See `x11docker --help` for further options.
 
