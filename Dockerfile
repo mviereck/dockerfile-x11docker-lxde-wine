@@ -21,6 +21,9 @@
 # Clipboard sharing with option                --clipboard
 # Sound support with option                    --alsa
 # With pulseaudio in image, sound support with --pulseaudio
+# Language setting with                        --lang=$LANG
+# Printing over CUPS with                      --printer
+# Webcam support with                          --webcam
 #
 # Look at x11docker --help for further options.
 
@@ -28,15 +31,12 @@ FROM x11docker/lxde:latest
 ENV DEBIAN_FRONTEND noninteractive
 # ENTRYPOINT and CMD are already defined in x11docker/lxde
 
-# contrib for winetricks, stretch-backports for latest wine
-RUN echo "deb http://deb.debian.org/debian stretch contrib" >> /etc/apt/sources.list && \
-    echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list
+# contrib for winetricks
+RUN echo "deb http://deb.debian.org/debian buster contrib" >> /etc/apt/sources.list
 
 # Multiarch for wine32, wine, some often needed dependencies:
 RUN dpkg --add-architecture i386 && apt-get update && \
-    apt-get -t stretch-backports install -y wine
-
-RUN apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
+    apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
 
 # wine gecko and mono
 RUN mkdir -p /usr/share/wine/gecko && \
