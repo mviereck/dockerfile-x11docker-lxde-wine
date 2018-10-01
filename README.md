@@ -28,9 +28,11 @@ Run PlayOnLinux only:
 See `x11docker --help` for further options.
 
 # Language
-The default language locale setting is `en_US.UTF-8`. You can change to your desired locale with x11docker options. Compare the output of `echo $LANG` on your host computer.
- - Example for german: `--env LANG=de_DE.UTF-8`
- - Example for chinese: `--env LANG=zh_CN.UTF-8`
+The default language locale setting is `en_US.UTF-8`. You can change to your desired locale with x11docker option `--lang`. 
+
+ - Example for german: `--lang de`
+ - Example for chinese: `--lang LANG=zh_CN`
+ - Example for host setting: `--lang=$LANG`
  
 # Fonts: chinese, japanese, korean
 To enable chinese, japanese and korean fonts in wine, run `winetricks cjkfonts`. You can also use a starter provided on the desktop  for this. 
