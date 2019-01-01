@@ -31,11 +31,11 @@ See `x11docker --help` for further options.
 The default language locale setting is `en_US.UTF-8`. You can change to your desired locale with x11docker option `--lang`. 
 
  - Example for german: `--lang de`
- - Example for chinese: `--lang LANG=zh_CN`
- - Example for host setting: `--lang=$LANG`
+ - Example for chinese: `--lang zh_CN`
+ - Example for host setting: `--lang $LANG`
  
 # Fonts: chinese, japanese, korean
-To enable chinese, japanese and korean fonts in wine, run `winetricks cjkfonts`. You can also use a starter provided on the desktop  for this. 
+To enable chinese, japanese and korean fonts in wine, run `winetricks cjkfonts`. There is also a starter provided on the desktop  for this. 
 
 # Extend image
 To add your desired applications, create your own Dockerfile with this image as a base. Example:
