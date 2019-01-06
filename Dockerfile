@@ -54,6 +54,13 @@ RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
 # pulseaudio
 RUN apt-get install -y --no-install-recommends pulseaudio pasystray pavucontrol
 
+# Window manager xfwm4 instead of LXDE/openbox to avoid some issues of PlayOnLinux 
+RUN apt-get install -y xfwm4
+RUN mkdir -p /etc/skel/.config/lxsession/LXDE && \
+echo '[Session]\n\
+window_manager=xfwm4\n\
+' >/etc/skel/.config/lxsession/LXDE/desktop.conf
+
 # Enable this for chinese, japanese and korean fonts in wine
 #winetricks -q cjkfonts
 
