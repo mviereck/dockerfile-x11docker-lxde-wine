@@ -1,9 +1,7 @@
 # x11docker/lxde-wine
 #
-# Run wine on LXDE desktop in docker. 
-# Use x11docker to run image. 
-# Get x11docker from github: 
-#   https://github.com/mviereck/x11docker 
+# Run wine on LXDE desktop in Docker container. 
+# Use x11docker to run image:  https://github.com/mviereck/x11docker 
 #
 # Use option --home to create a persistant home folder 
 # in ~/x11docker to preserve your wine installations.
@@ -16,53 +14,60 @@
 #
 # Options:
 # Persistent home folder stored on host with   --home
-# Shared host folder with                      --sharedir DIR
+# Shared host file or folder with              --share PATH
 # Hardware acceleration with option            --gpu
 # Clipboard sharing with option                --clipboard
 # Sound support with option                    --alsa
 # With pulseaudio in image, sound support with --pulseaudio
-# Language setting with                        --lang=$LANG
+# Language setting with                        --lang [=$LANG]
 # Printing over CUPS with                      --printer
 # Webcam support with                          --webcam
 #
 # Look at x11docker --help for further options.
 
 FROM x11docker/lxde:latest
-ENV DEBIAN_FRONTEND noninteractive
-# ENTRYPOINT and CMD are already defined in x11docker/lxde
 
-# contrib for winetricks
-RUN echo "deb http://deb.debian.org/debian buster contrib" >> /etc/apt/sources.list
-
-# Multiarch for wine32, wine, some often needed dependencies:
-RUN dpkg --add-architecture i386 && apt-get update && \
-    apt-get install -y fonts-wine winetricks ttf-mscorefonts-installer winbind
-
-# wine gecko and mono
-RUN mkdir -p /usr/share/wine/gecko && \
-    cd /usr/share/wine/gecko && wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
-    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi && \
+RUN echo "deb http://deb.debian.org/debian buster contrib" >> /etc/apt/sources.list && \
+    env DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386 && \
+    apt-get update && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      fonts-wine \
+      locales \
+      ttf-mscorefonts-installer \
+      wget \
+      winbind \
+      winetricks && \
+    mkdir -p /usr/share/wine/gecko && \
+    cd /usr/share/wine/gecko && \
+      wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
+      wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi && \
     mkdir -p /usr/share/wine/mono && \
-    cd /usr/share/wine/mono  && wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi
-
-# PlayOnLinux, q4wine
-RUN apt-get install -y playonlinux xterm gettext q4wine gnome-icon-theme
-
-# OpenGL / MESA
-RUN apt-get install -y mesa-utils mesa-utils-extra libxv1
-
-# pulseaudio
-RUN apt-get install -y --no-install-recommends pulseaudio pasystray pavucontrol
-
-# Window manager xfwm4 instead of LXDE/openbox to avoid some issues of PlayOnLinux 
-RUN apt-get install -y xfwm4
-RUN mkdir -p /etc/skel/.config/lxsession/LXDE && \
-echo '[Session]\n\
+    cd /usr/share/wine/mono && \
+      wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      gettext \
+      gnome-icon-theme \
+      playonlinux \
+      q4wine \
+      xterm && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      libxv1 \
+      mesa-utils \
+      mesa-utils-extra && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      libpulse0 \
+      pavucontrol \
+      pasystray
+      
+RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      xfwm4 && \
+    mkdir -p /etc/skel/.config/lxsession/LXDE && \
+    echo '[Session]\n\
 window_manager=xfwm4\n\
 ' >/etc/skel/.config/lxsession/LXDE/desktop.conf
 
 # Enable this for chinese, japanese and korean fonts in wine
-#winetricks -q cjkfonts
+#RUN winetricks -q cjkfonts
 
 # create desktop icons
 #
@@ -96,5 +101,3 @@ createicon "Taskmanager"        "wine taskmgr"      utilities-system-monitor && 
 createicon "Control Panel"      "wine control"      preferences-system && \
 createicon "OleView"            "wine oleview"      preferences-system && \
 createicon "CJK fonts installer chinese japanese korean"  "xterm -e \"winetricks cjkfonts\""  font
-
-ENV DEBIAN_FRONTEND newt
