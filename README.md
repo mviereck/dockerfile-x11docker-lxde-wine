@@ -7,7 +7,7 @@ LXDE desktop containing wine, winetricks, q4wine and playonlinux
 
 # Examples:
 Run LXDE desktop including wine:
-  - `x11docker --desktop x11docker/lxde-wine`
+  - `x11docker --desktop --cap-default x11docker/lxde-wine`
 
 Use host folder to preserve installed Windows applications with option `--home`: 
   - `x11docker --desktop --home x11docker/lxde-wine`

@@ -8,9 +8,9 @@
 #
 # Examples: 
 #   - Run desktop:
-#       x11docker --home --desktop x11docker/lxde-wine
+#       x11docker --home --cap-default --desktop x11docker/lxde-wine
 #   - Run PlayOnLinux only:
-#       x11docker --home x11docker/lxde-wine playonlinux
+#       x11docker --home --cap-default x11docker/lxde-wine playonlinux
 #
 # Options:
 # Persistent home folder stored on host with   --home
