@@ -53,8 +53,8 @@ RUN . /etc/os-release && \
 
 RUN mkdir -p /usr/share/wine/gecko && \
     cd /usr/share/wine/gecko && \
-    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47.1-x86.msi && \
-    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47.1-x86_64.msi
+    wget http://dl.winehq.org/wine/wine-gecko/2.47.1/wine-gecko-2.47.1-x86.msi && \
+    wget http://dl.winehq.org/wine/wine-gecko/2.47.1/wine-gecko-2.47.1-x86_64.msi
 
 RUN mkdir -p /usr/share/wine/mono && \
     cd /usr/share/wine/mono && \
