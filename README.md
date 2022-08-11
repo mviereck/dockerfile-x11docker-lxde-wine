@@ -4,6 +4,22 @@ LXDE desktop containing wine, winetricks, q4wine and playonlinux
 
  - Get [x11docker from github](https://github.com/mviereck/x11docker) to run GUI applications and desktop environments in docker images.
  - Use x11docker to run image. 
+ 
+# Building image
+You can pull the image from docker hub with `docker pull x11docker/lxde-wine`.
+However, the image on docker hub can be a bit outdated.
+I recommend to build the image yourself:
+```
+docker pull debian:bullseye
+x11docker --build x11docker/lxde
+x11docker --build x11docker/lxde-wine
+```
+Or, same with podman:
+```
+podman pull debian:bullseye
+x11docker --build x11docker/lxde --backend=podman
+x11docker --build x11docker/lxde-wine --backend=podman
+```
 
 # Examples:
 Run LXDE desktop including wine:

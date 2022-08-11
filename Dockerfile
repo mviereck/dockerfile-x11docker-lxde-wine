@@ -27,40 +27,62 @@
 
 FROM x11docker/lxde:latest
 
-RUN echo "deb http://deb.debian.org/debian buster contrib" >> /etc/apt/sources.list && \
+# cleanapt script for use after apt-get
+RUN echo '#! /bin/sh\n\
+env DEBIAN_FRONTEND=noninteractive apt-get autoremove -y\n\
+apt-get clean\n\
+find /var/lib/apt/lists -type f -delete\n\
+find /var/cache -type f -delete\n\
+find /var/log -type f -delete\n\
+exit 0\n\
+' > /cleanapt && chmod +x /cleanapt
+
+RUN . /etc/os-release && \
+    echo "deb http://deb.debian.org/debian $VERSION_CODENAME contrib non-free" >> /etc/apt/sources.list && \
     env DEBIAN_FRONTEND=noninteractive dpkg --add-architecture i386 && \
     apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      fonts-wine \
-      locales \
-      ttf-mscorefonts-installer \
-      wget \
-      winbind \
-      winetricks && \
-    mkdir -p /usr/share/wine/gecko && \
+        fonts-wine \
+        locales \
+        ttf-mscorefonts-installer \
+        wget \
+        winbind \
+        wine \
+        winetricks && \
+    /cleanapt
+
+RUN mkdir -p /usr/share/wine/gecko && \
     cd /usr/share/wine/gecko && \
-      wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
-      wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi && \
-    mkdir -p /usr/share/wine/mono && \
+    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
+    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi
+
+RUN mkdir -p /usr/share/wine/mono && \
     cd /usr/share/wine/mono && \
-      wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi && \
+    wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi
+
+RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      gettext \
-      gnome-icon-theme \
-      playonlinux \
-      q4wine \
-      xterm && \
-    env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      libxv1 \
-      mesa-utils \
-      mesa-utils-extra && \
+        gettext \
+        gnome-icon-theme \
+        playonlinux \
+        q4wine \
+        xterm && \
+    /cleanapt
+
+RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      libpulse0 \
-      pavucontrol \
-      pasystray
-      
-RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      xfwm4 && \
+        libpulse0 \
+        libxv1 \
+        mesa-utils \
+        mesa-utils-extra \
+        pasystray \
+        pavucontrol && \
+    /cleanapt
+
+RUN apt-get update && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        xfwm4 && \
+    /cleanapt && \
     mkdir -p /etc/skel/.config/lxsession/LXDE && \
     echo '[Session]\n\
 window_manager=xfwm4\n\
