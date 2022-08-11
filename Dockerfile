@@ -53,12 +53,12 @@ RUN . /etc/os-release && \
 
 RUN mkdir -p /usr/share/wine/gecko && \
     cd /usr/share/wine/gecko && \
-    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
-    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86_64.msi
+    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47.1-x86.msi && \
+    wget https://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47.1-x86_64.msi
 
 RUN mkdir -p /usr/share/wine/mono && \
     cd /usr/share/wine/mono && \
-    wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi
+    wget https://dl.winehq.org/wine/wine-mono/4.9.4/wine-mono-4.9.4.msi
 
 RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -y \
